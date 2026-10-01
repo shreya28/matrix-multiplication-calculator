@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <title>Matrix Multiplication</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap">
 <style>
 :root{--bg1:#eef0ff;--bg2:#fdeef7;--panel:rgba(255,255,255,.78);--cell:#fff;--ink:#1b1740;--mute:#625e87;--line:#d9d6f2;--a:#6d4aff;--b:#e0489a;--r:#0fa58a;--hA:#e5ddff;--hB:#ffdcec;--hR:#c9f3ea;--ring:rgba(109,74,255,.25);--btn:#fff;--err:#c4204a;--shadow:0 10px 30px rgba(80,60,200,.12);
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#0d0b24;--bg2:#1c0f30;--panel:rgba(30,26,66,.72);--cell:#15123a;--ink:#ece9ff;--mute:#a9a4d6;--line:#37316b;--a:#9b85ff;--b:#ff7ab8;--r:#3fe0c0;--hA:#3b2f8c;--hB:#7a2a57;--hR:#145c4d;--ring:rgba(155,133,255,.35);--btn:#12082e;--err:#ff8aa5;--shadow:0 10px 30px rgba(0,0,0,.4)}}
 :root[data-theme="dark"]{--bg1:#0d0b24;--bg2:#1c0f30;--panel:rgba(30,26,66,.72);--cell:#15123a;--ink:#ece9ff;--mute:#a9a4d6;--line:#37316b;--a:#9b85ff;--b:#ff7ab8;--r:#3fe0c0;--hA:#3b2f8c;--hB:#7a2a57;--hR:#145c4d;--ring:rgba(155,133,255,.35);--btn:#12082e;--err:#ff8aa5;--shadow:0 10px 30px rgba(0,0,0,.4)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -16,7 +17,8 @@ body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 "Sora",system-ui,
 background:radial-gradient(600px 400px at 8% 0%,rgba(109,74,255,.22),transparent 70%),radial-gradient(600px 420px at 100% 10%,rgba(224,72,154,.18),transparent 70%),radial-gradient(700px 500px at 50% 110%,rgba(15,165,138,.16),transparent 70%),linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed}
 main{max-width:1040px;margin:0 auto;padding:34px 18px 60px}
 .badge{display:inline-block;font:500 .78rem "JetBrains Mono",ui-monospace,Menlo,monospace;color:var(--a);border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:99px;margin-bottom:14px}
-h1{font-weight:800;font-size:clamp(2rem,6vw,3.2rem);line-height:1.08;margin:0 0 10px;letter-spacing:-.02em;color:var(--a);background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+h1{font-weight:800;font-size:clamp(2rem,6vw,3.2rem);line-height:1.08;margin:0 0 18px;letter-spacing:-.02em;color:var(--ink)}
+h1::after{content:"";display:block;width:84px;height:6px;border-radius:99px;margin-top:12px;background:linear-gradient(90deg,var(--a),var(--b))}
 p.lead{color:var(--mute);margin:0 0 26px;max-width:58ch}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .dims{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end;padding:20px 22px}
