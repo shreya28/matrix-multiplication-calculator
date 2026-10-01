@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matrix Multiplication</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{--bg1:#eef0ff;--bg2:#fdeef7;--panel:rgba(255,255,255,.78);--cell:#fff;--ink:#1b1740;--mute:#625e87;--line:#d9d6f2;--a:#6d4aff;--b:#e0489a;--r:#0fa58a;--hA:#e5ddff;--hB:#ffdcec;--hR:#c9f3ea;--ring:rgba(109,74,255,.25);--btn:#fff;--err:#c4204a;--shadow:0 10px 30px rgba(80,60,200,.12);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#0d0b24;--bg2:#1c0f30;--panel:rgba(30,26,66,.72);--cell:#15123a;--ink:#ece9ff;--mute:#a9a4d6;--line:#37316b;--a:#9b85ff;--b:#ff7ab8;--r:#3fe0c0;--hA:#3b2f8c;--hB:#7a2a57;--hR:#145c4d;--ring:rgba(155,133,255,.35);--btn:#12082e;--err:#ff8aa5;--shadow:0 10px 30px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{--bg1:#0d0b24;--bg2:#1c0f30;--panel:rgba(30,26,66,.72);--cell:#15123a;--ink:#ece9ff;--mute:#a9a4d6;--line:#37316b;--a:#9b85ff;--b:#ff7ab8;--r:#3fe0c0;--hA:#3b2f8c;--hB:#7a2a57;--hR:#145c4d;--ring:rgba(155,133,255,.35);--btn:#12082e;--err:#ff8aa5;--shadow:0 10px 30px rgba(0,0,0,.4)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.55 "Sora",system-ui,-apple-system,"Segoe UI",sans-serif;
+background:radial-gradient(600px 400px at 8% 0%,rgba(109,74,255,.22),transparent 70%),radial-gradient(600px 420px at 100% 10%,rgba(224,72,154,.18),transparent 70%),radial-gradient(700px 500px at 50% 110%,rgba(15,165,138,.16),transparent 70%),linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed}
+main{max-width:1040px;margin:0 auto;padding:34px 18px 60px}
+.badge{display:inline-block;font:500 .78rem "JetBrains Mono",ui-monospace,Menlo,monospace;color:var(--a);border:1px solid var(--line);background:var(--panel);padding:5px 12px;border-radius:99px;margin-bottom:14px}
+h1{font-weight:800;font-size:clamp(2rem,6vw,3.2rem);line-height:1.08;margin:0 0 10px;letter-spacing:-.02em;color:var(--a);background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+p.lead{color:var(--mute);margin:0 0 26px;max-width:58ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.dims{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end;padding:20px 22px}
+.dims fieldset{border:0;margin:0;padding:0;display:flex;gap:10px;align-items:flex-end}
+.dims legend{font-weight:700;padding:0;margin-bottom:8px}
+.fa legend{color:var(--a)}.fb legend{color:var(--b)}
+.dims .x{color:var(--mute);padding-bottom:9px}
+label.s{display:flex;flex-direction:column;font-size:.78rem;color:var(--mute);gap:4px}
+input[type=number]{font:inherit;color:var(--ink);background:var(--cell);border:2px solid var(--line);border-radius:10px;transition:border-color .15s,box-shadow .15s}
+.dims input{width:78px;padding:9px 10px}
+input[type=number]:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 4px var(--ring)}
+button{font:inherit;font-weight:700;padding:11px 20px;border-radius:12px;border:2px solid transparent;cursor:pointer;color:var(--btn);background:linear-gradient(90deg,var(--a),var(--b));box-shadow:0 6px 16px var(--ring);transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--ring)}
+button:active{transform:translateY(0)}
+button.alt{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:none}
+button.alt:hover{border-color:var(--a)}
+button:focus-visible,td.o:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+#msg{min-height:1.6em;margin:14px 2px 0;font-weight:600;color:var(--mute)}
+#msg.err{color:var(--err)}
+.grid{display:flex;flex-wrap:wrap;gap:20px 18px;align-items:flex-start;margin-top:18px}
+.mat{padding:18px 20px 20px;max-width:100%}
+.ma{--mc:var(--a)}.mb{--mc:var(--b)}.mr{--mc:var(--r)}
+.mat h2{display:flex;align-items:center;gap:8px;font-size:.95rem;margin:0 0 14px;color:var(--mc)}
+.mat h2::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--mc)}
+.mat h2 small{color:var(--mute);font:500 .78rem "JetBrains Mono",ui-monospace,monospace}
+.wrap{overflow-x:auto;max-width:100%;padding:2px 4px}
+.br{position:relative;display:inline-block;padding:0 12px;min-width:76px;min-height:58px}
+.br::before,.br::after{content:"";position:absolute;top:0;bottom:0;width:9px;border:3px solid var(--mc)}
+.br::before{left:0;border-right:0;border-radius:8px 0 0 8px}
+.br::after{right:0;border-left:0;border-radius:0 8px 8px 0}
+table{border-collapse:separate;border-spacing:6px}
+td input{width:64px;padding:10px 4px;text-align:center;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.ma input:focus{border-color:var(--a)}
+.mb input:focus{border-color:var(--b);box-shadow:0 0 0 4px rgba(224,72,154,.25)}
+td.o{min-width:64px;padding:10px 6px;text-align:center;border-radius:10px;border:2px solid var(--r);background:var(--cell);font:700 1rem "JetBrains Mono",ui-monospace,Menlo,monospace;cursor:pointer;animation:pop .4s cubic-bezier(.3,1.5,.5,1) both;transition:background .15s}
+td.o:hover{background:var(--hR)}
+@keyframes pop{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.ma td.hl input{background:var(--hA);border-color:var(--a)}
+.mb td.hl input{background:var(--hB);border-color:var(--b)}
+td.o.hl{background:var(--hR)}
+.op{align-self:center;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--mute);font-size:1.3rem;font-weight:700}
+#calc{display:none;margin-top:18px;padding:16px 20px;overflow-x:auto}
+#calc .t{display:block;color:var(--mute);font-size:.78rem;margin-bottom:6px}
+#calc code{font:500 1rem/1.7 "JetBrains Mono",ui-monospace,Menlo,monospace;white-space:nowrap}
+.ta{color:var(--a)}.tb{color:var(--b)}.tr{color:var(--r);font-weight:700}
+.actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+footer{margin-top:40px;color:var(--mute);font-size:.82rem;text-align:center}
+@media (max-width:640px){.op{display:none}.mat{width:100%}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<span class="badge">A (m×n) · B (n×p) = R (m×p)</span>
+<h1>Matrix Multiplication</h1>
+<p class="lead">Set the size of each matrix, fill in the numbers, and multiply. Click any result cell to see exactly how it was calculated.</p>
+
+<section class="card dims">
+  <fieldset class="fa"><legend>Matrix A</legend>
+    <label class="s">Rows<input id="r1" type="number" min="1" max="8" value="2"></label><span class="x">×</span>
+    <label class="s">Columns<input id="c1" type="number" min="1" max="8" value="3"></label>
+  </fieldset>
+  <fieldset class="fb"><legend>Matrix B</legend>
+    <label class="s">Rows<input id="r2" type="number" min="1" max="8" value="3"></label><span class="x">×</span>
+    <label class="s">Columns<input id="c2" type="number" min="1" max="8" value="2"></label>
+  </fieldset>
+  <button id="make">Create matrices</button>
+</section>
+<p id="msg" role="status"></p>
+
+<div class="grid" id="grid" hidden>
+  <section class="card mat ma"><h2>Matrix A <small id="dA"></small></h2><div class="wrap"><div class="br"><table id="A"></table></div></div></section>
+  <div class="op" aria-hidden="true">×</div>
+  <section class="card mat mb"><h2>Matrix B <small id="dB"></small></h2><div class="wrap"><div class="br"><table id="B"></table></div></div></section>
+  <div class="op" aria-hidden="true">=</div>
+  <section class="card mat mr"><h2>Result <small id="dR"></small></h2><div class="wrap"><div class="br"><table id="R"></table></div></div></section>
+</div>
+<div id="calc" class="card" aria-live="polite"><span class="t">Calculation</span><code id="calcText"></code></div>
+
+<div class="actions" id="actions" hidden>
+  <button id="mul">Multiply</button>
+  <button class="alt" id="rand">Random numbers</button>
+  <button class="alt" id="clear">Clear</button>
+</div>
+<footer>Built with plain HTML, CSS and JavaScript</footer>
+</main>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var A=$('A'),B=$('B'),R=$('R'),msg=$('msg'),calc=$('calc'),calcText=$('calcText');
+  var r1,c1,r2,c2,result=null;
+
+  function say(t,err){msg.textContent=t;msg.className=err?'err':''}
+  function dim(id){var v=parseInt($(id).value,10);return v>=1&&v<=8?v:NaN}
+
+  function build(t,rows,cols,name){
+    t.innerHTML='';
+    for(var i=0;i<rows;i++){
+      var tr=document.createElement('tr');
+      for(var j=0;j<cols;j++){
+        var td=document.createElement('td'),inp=document.createElement('input');
+        inp.type='number';inp.step='any';inp.value=0;
+        inp.setAttribute('aria-label',name+' row '+(i+1)+' column '+(j+1));
+        td.appendChild(inp);tr.appendChild(td);
+      }
+      t.appendChild(tr);
+    }
+  }
+  function read(t,rows,cols){
+    var m=[],ins=t.querySelectorAll('input');
+    for(var i=0;i<rows;i++){m.push([]);for(var j=0;j<cols;j++){
+      var v=parseFloat(ins[i*cols+j].value);
+      if(isNaN(v))return null;m[i].push(v);}}
+    return m;
+  }
+  function clearHl(){
+    document.querySelectorAll('.hl').forEach(function(e){e.classList.remove('hl')});
+    calc.style.display='none';
+  }
+
+  $('make').onclick=function(){
+    r1=dim('r1');c1=dim('c1');r2=dim('r2');c2=dim('c2');
+    if([r1,c1,r2,c2].some(isNaN)){say('Enter sizes between 1 and 8 for every field.',true);return}
+    if(c1!==r2){
+      say('Multiplication is not possible: columns of A ('+c1+') must equal rows of B ('+r2+').',true);
+      $('grid').hidden=true;$('actions').hidden=true;calc.style.display='none';return;
+    }
+    build(A,r1,c1,'A');build(B,r2,c2,'B');
+    R.innerHTML='';result=null;clearHl();
+    $('dA').textContent=r1+'×'+c1;$('dB').textContent=r2+'×'+c2;$('dR').textContent=r1+'×'+c2;
+    $('grid').hidden=false;$('actions').hidden=false;
+    say('Result will be a '+r1+' × '+c2+' matrix. Enter values, then multiply.');
+  };
+
+  $('mul').onclick=function(){
+    var a=read(A,r1,c1),b=read(B,r2,c2);
+    if(!a||!b){say('Fill every cell with a number.',true);return}
+    result=[];R.innerHTML='';clearHl();
+    for(var i=0;i<r1;i++){
+      result.push([]);var tr=document.createElement('tr');
+      for(var j=0;j<c2;j++){
+        var s=0;for(var k=0;k<c1;k++)s+=a[i][k]*b[k][j];
+        s=Math.round(s*1e10)/1e10;result[i].push(s);
+        var td=document.createElement('td');td.className='o';td.textContent=s;
+        td.style.animationDelay=((i*c2+j)*45)+'ms';
+        td.tabIndex=0;td.setAttribute('role','button');
+        td.setAttribute('aria-label','Result row '+(i+1)+' column '+(j+1)+': '+s+'. Show calculation');
+        (function(i,j,td){
+          var go=function(){explain(a,b,i,j,td)};
+          td.onclick=go;
+          td.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
+        })(i,j,td);
+        tr.appendChild(td);
+      }
+      R.appendChild(tr);
+    }
+    say('Done. Click a result cell to see its calculation.');
+  };
+
+  function explain(a,b,i,j,td){
+    clearHl();
+    var parts=[],k;
+    for(k=0;k<c1;k++)parts.push('(<span class="ta">'+a[i][k]+'</span> × <span class="tb">'+b[k][j]+'</span>)');
+    for(k=0;k<c1;k++)A.rows[i].cells[k].classList.add('hl');
+    for(k=0;k<r2;k++)B.rows[k].cells[j].classList.add('hl');
+    td.classList.add('hl');
+    calcText.innerHTML='R['+(i+1)+']['+(j+1)+'] = '+parts.join(' + ')+' = <span class="tr">'+result[i][j]+'</span>';
+    calc.style.display='block';
+  }
+
+  $('rand').onclick=function(){
+    document.querySelectorAll('#A input,#B input').forEach(function(e){e.value=Math.floor(Math.random()*19)-9});
+    R.innerHTML='';result=null;clearHl();say('Random numbers filled in. Press Multiply.');
+  };
+  $('clear').onclick=function(){
+    document.querySelectorAll('#A input,#B input').forEach(function(e){e.value=0});
+    R.innerHTML='';result=null;clearHl();say('Matrices cleared.');
+  };
+
+  $('make').click();
+  var s=[[1,2,3],[4,5,6]],t=[[7,8],[9,10],[11,12]];
+  A.querySelectorAll('input').forEach(function(e,n){e.value=s[Math.floor(n/3)][n%3]});
+  B.querySelectorAll('input').forEach(function(e,n){e.value=t[Math.floor(n/2)][n%2]});
+  say('Example loaded. Press Multiply, or change the sizes and values.');
+})();
+</script>
+</body>
+</html>
